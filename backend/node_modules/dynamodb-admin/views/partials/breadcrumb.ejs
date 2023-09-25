@@ -1,0 +1,55 @@
+<ol class="breadcrumb">
+  <% for (const item of breadcrumb) { %>
+  <a class="breadcrumb-item<%= item.active ? ' active' : '' %>" <%- item.href ? `href="${item.href}"`: '' %>><%= item.text %>
+    <% if (item.badge) { %>
+      <span class="badge badge-secondary badge-pill ml-1"><%= item.badge %></span>
+    <% } %>
+  </a>
+  <% } %>
+  <div class="flex-fill"></div>
+  <div>
+    Dark Theme <% let checked = theme.toString() === "dark" ? "checked" : "" %>
+    <input id="dark-theme-toggle" type="checkbox" <%= checked %> data-toggle="toggle" data-onstyle="dark" data-size="xs">
+  </div>
+</ol>
+
+<script>
+  const DEFAULT_THEME = 'light'
+
+  function changeColorScheme(theme) {
+    //dark theme preferred, set document with a `data-theme` attribute
+    if (theme === "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+    }
+
+    //also check or uncheck the toggle
+    $('#dark-theme-toggle').attr('checked', theme === "dark");
+    document.location.reload();
+  }
+
+  function setCookie(theme) {
+    $.cookie("theme", theme, { path: '/' });
+  }
+
+  function detectColorScheme() {
+    const curTheme = document.documentElement.getAttribute("data-theme") || DEFAULT_THEME;
+
+    setCookie(curTheme);
+  }
+
+  $(function () {
+    $('#dark-theme-toggle').change(function () {
+      const themes = ['light', 'dark'];
+
+      const curTheme = document.documentElement.getAttribute("data-theme") || DEFAULT_THEME;
+      const newTheme = curTheme === themes[1] ? themes[0] : themes[1]
+
+      setCookie(newTheme);
+      changeColorScheme(newTheme);
+    });
+
+    detectColorScheme();
+  });
+</script>
